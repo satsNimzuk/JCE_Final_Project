@@ -53,16 +53,32 @@ namespace TestProject
         {
 
             FileStream outFileStream = File.Open(fileName, FileMode.Create, FileAccess.Write);
-
             StreamWriter fileWriter = new StreamWriter(outFileStream);
-
-
 
             fileWriter.Write(treeToString(treeRoot, pageRank));
             fileWriter.Flush();
             fileWriter.Close();
             outFileStream.Close();
         }
+
+        public void pathToFile(List<Node> path, Vector rank, String fileName)
+        {
+            FileStream outFileStream = File.Open(fileName, FileMode.Create, FileAccess.Write);
+            StreamWriter fileWriter = new StreamWriter(outFileStream);
+
+            String result = "";
+
+            foreach (Node step in path)
+            {
+                result += step.name + " | " + step.depth + " | " + rank.vector[step.name].ToString() + Environment.NewLine;
+            }
+
+            fileWriter.Write(result);
+            fileWriter.Flush();
+            fileWriter.Close();
+            outFileStream.Close();
+        }
+
 
         private String treeToString(Node treeRoot, Vector pageRank)
         {

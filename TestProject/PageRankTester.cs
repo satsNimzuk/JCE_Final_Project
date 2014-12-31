@@ -22,7 +22,7 @@ namespace TestProject
             n1.links = list;
 
             LinkMatrix lm = new LinkMatrix(n1);
-            lm.calculateRank(60);
+            lm.calculateRank(600);
 
             Vector result = lm.getPageRank();
         }
@@ -102,6 +102,10 @@ namespace TestProject
             Vector result = lm.getPageRank();           
         }
 
+        public void test3()
+        {
+
+        }
 
 
     }

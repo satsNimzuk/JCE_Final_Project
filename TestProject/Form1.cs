@@ -33,30 +33,34 @@ namespace TestProject
 
             //tm.getLinksFromArticle("Admiralty Shipyard");
 
-            PageRankTester tester = new PageRankTester();
-            tester.test2();
-            tester.test1();
+            //PageRankTester tester = new PageRankTester();
+            //tester.test2();
+            //tester.test1();
 
             stopwatch.Start();
-            Node tree = treeMan.buildTree("Motorcycle", 3);
+            Node tree = treeMan.buildTree("Tel Aviv", 2);
             stopwatch.Stop();
             var t = stopwatch.Elapsed;
 
-            tree.toFile(Const.WORK_DIR_PATH + @"result.txt");
+            //tree.toFile(Const.RESULTS_DIR_PATH + @"tree.txt");
 
             LinkMatrix lm = new LinkMatrix(tree);
 
-            lm.calculateRank(60);
+            lm.calculateRank(600);
 
             Vector rank = lm.getPageRank();
 
             MaxVariancePathFinder pf = new MaxVariancePathFinder();
-            List<Node> path = pf.findPath(tree, rank);
+            //Path gridyPath = pf.findGridyPath(tree, rank);
+            Path path = pf.findPath(tree, rank);
+            List<Path> paths = pf.findNPaths(tree,rank,5);
 
-            rank.sortedToFile(Const.WORK_DIR_PATH + @"page_rank_result.txt");
 
-            
-            util.treeWithPageRankToFile(tree, rank, Const.WORK_DIR_PATH + @"tree_with_rank.txt");
+            //gridyPath.pathToFile(rank, Const.RESULTS_DIR_PATH + @"gridy_path_with_rank.txt");
+            //path.pathToFile(rank, Const.RESULTS_DIR_PATH + @"path_with_rank.txt");
+            path.pathsListToFile(paths, rank, Const.RESULTS_DIR_PATH + @"paths_with_rank.txt");
+            rank.sortedToFile(Const.RESULTS_DIR_PATH + @"page_rank_result.txt");
+            //util.treeWithPageRankToFile(tree, rank, Const.RESULTS_DIR_PATH + @"tree_with_rank.txt");
            
         }
     }

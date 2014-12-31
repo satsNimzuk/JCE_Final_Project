@@ -24,7 +24,7 @@ namespace TestProject
             
             for (int i = 0; i < Const.INDEX_DEPTH - 1; i++)
             {
-                String fileName = Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + i + @".txt";
+                String fileName = Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + i + @".txt";
                 this.indexFileStreamArr[i] = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             }
 
@@ -47,6 +47,69 @@ namespace TestProject
 
             result = getArticleByOffset(offset);
 
+
+            return result;
+        }
+
+        //new getArticle method hopefully more eficient one
+        public String getArticleByNameNew(String name)
+        {
+            String result = "";
+            int line = 0;
+
+            line = findIndexLineByName(name);
+
+            long offset = Convert.ToInt64(index[line].Split(',').Last().Trim());
+
+            for (int i = Const.INDEX_DEPTH - 2; i > 0; i--)
+            {
+                offset = findOffsetByName(name, i, offset);
+            }
+            long indexOffset = offset;
+            offset = findOffsetByName(name, 0, offset);
+            long length = getNextOffset(0, indexOffset) - offset;
+
+            result = getArticleByOffset(offset, length);
+
+
+            return result;
+        }
+
+        //this method returns returns offset saved in the next line of index file
+        private long getNextOffset(int level, long startOffset)  
+        {
+            long result = startOffset;
+            byte[] lineBuffer = new byte[10000];
+            int bytesRead = 0;
+            String currentLine = "";
+            String[] strArray;
+
+            this.indexFileStreamArr[level].Position = startOffset;
+
+            if ((bytesRead = util.getLine(this.indexFileStreamArr[level], ref lineBuffer)) < 1) //skipping first line
+            {
+                return -1;
+            }
+            if ((bytesRead = util.getLine(this.indexFileStreamArr[level], ref lineBuffer)) > 0)
+            {
+
+                currentLine = System.Text.Encoding.Default.GetString(lineBuffer, 0, bytesRead).Trim();
+                strArray = currentLine.Split(',');
+
+                currentLine = "";
+
+                for (int i = 0; i < strArray.Length - 1; i++)
+                {
+                    currentLine += strArray[i];
+                }
+                currentLine = currentLine.Trim();
+
+                result = Convert.ToInt64(strArray.Last().Trim());
+            }
+            else
+            {
+                return -1;
+            }
 
             return result;
         }
@@ -142,8 +205,6 @@ namespace TestProject
 
         public String getArticleByOffset(long offset)
         {
-            //FileStream fileStream = new FileStream(Const.WIKI_FILE_PATH, FileMode.Open, FileAccess.Read);
-            //fileStream.Position = offset;
             wikiFileStream.Position = offset;
 
             byte[] buffer = new byte[1000000];
@@ -158,7 +219,6 @@ namespace TestProject
                 article += line;
                 if (isEndOfArticle(line))
                 {
-                    //fileStream.Close();
                     return article;
                 }
                 if (watchdog > 1000000)
@@ -167,6 +227,28 @@ namespace TestProject
                 }
                 watchdog++;
             }
+        }
+
+        public String getArticleByOffset(long offset, long length)
+        {
+
+            wikiFileStream.Position = offset;
+
+            byte[] buffer = new byte[length];
+            String article = "";
+
+            int bufferStart = 0;
+            int read = 0;
+            int leftToRead = (int)length;
+
+            while (leftToRead > 0 && (read = wikiFileStream.Read(buffer, bufferStart, leftToRead)) > 0)
+            {
+                leftToRead -= read;
+                bufferStart += read;
+            }
+
+            article = System.Text.Encoding.Default.GetString(buffer, 0, (int)length);
+            return article;
         }
 
 
@@ -197,7 +279,7 @@ namespace TestProject
 
         private List<String> readIndex()
         {
-            String indexFilePath = Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + @"4.txt";
+            String indexFilePath = Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + @"4.txt";
             FileStream inFileStream = new FileStream(indexFilePath, FileMode.Open, FileAccess.Read);
             List<String> result = util.readNLinesToList(-1, inFileStream);
             return result;

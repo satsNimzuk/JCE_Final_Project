@@ -39,6 +39,7 @@ namespace TestProject
             links.RemoveAll(link => link.Split(':')[0].Equals("Category"));
             links.RemoveAll(link => link.Split(':')[0].Equals("Wikipedia"));
             links.RemoveAll(link => link.Split(':')[0].Equals("Image"));
+            links.RemoveAll(link => link.Split(':')[0].Equals("Template"));
             return links;
         }
         private List<String> parseLinks(List<String> links)
@@ -47,8 +48,12 @@ namespace TestProject
             {
                 if (links[i].Length > 1)
                 {
-                    links[i] = links[i].Split('|')[0].Trim();
-                    links[i] = char.ToUpper(links[i][0]) + links[i].Substring(1);
+                    try
+                    {
+                        links[i] = links[i].Split('|')[0].Trim();
+                        links[i] = char.ToUpper(links[i][0]) + links[i].Substring(1);
+                    }
+                    catch{}
                 }
             }
             return links;
