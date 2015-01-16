@@ -36,22 +36,25 @@ namespace TestProject
 
             foreach (String link in links)
             {
-                Node leaf = new Node();
-                leaf.name = link;
-                leaf.depth = (byte)(depth - 1);
-                treeRoot.links.Add(leaf);
+                if (link.Length > 0)
+                {
+                    Node leaf = new Node();
+                    leaf.name = link;
+                    leaf.depth = (byte)(depth - 1);
+                    treeRoot.links.Add(leaf);
 
-                if (!uniqArticleNames.ContainsKey(link))
-                {
-                    uniqArticleNames.Add(link, (byte)(depth - 1));
-                    buildTreeRec(leaf, (byte)(depth - 1));
-                }
-                else
-                {
-                    if ((byte)(depth - 1) > uniqArticleNames[link])  //need to fix it + uniqArticleNames should be part of the output
+                    if (!uniqArticleNames.ContainsKey(link))
                     {
-                        uniqArticleNames[link] = (byte)(depth - 1);
+                        uniqArticleNames.Add(link, (byte)(depth - 1));
                         buildTreeRec(leaf, (byte)(depth - 1));
+                    }
+                    else
+                    {
+                        if ((byte)(depth - 1) > uniqArticleNames[link])  //need to fix it + uniqArticleNames should be part of the output
+                        {
+                            uniqArticleNames[link] = (byte)(depth - 1);
+                            buildTreeRec(leaf, (byte)(depth - 1));
+                        }
                     }
                 }
             }

@@ -17,16 +17,18 @@ namespace TestProject
             util = new Utilities();
         }
 
-        public void buildIndexLevel_0(String sourceFilePath)
+        public void buildIndexLevel_0(String sourceFileName, String indexFileName)
         {
-            String indexFilePath = Const.WORK_DIR_PATH + Const.INDEX_LEVEL_0_FILE_NAME;
-            FileStream inFileStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read);
-            FileStream outFileStream = File.Open(indexFilePath, FileMode.Append, FileAccess.Write);
+            FileStream inFileStream = new FileStream(sourceFileName, FileMode.Open, FileAccess.Read);
+            FileStream outFileStream = File.Open(indexFileName, FileMode.Append, FileAccess.Write);
             StreamWriter fileWriter = new StreamWriter(outFileStream);
             long totalOffset = 0;
+            long currentOffset = 0;
+            long prevOffset = 0;
             String currentLine = "";
             String title = "";
             String indexEntry = "";
+            String prevIndexEntry = "";
             int bytesRead = 0;
             byte[] lineBuffer = new byte[1000000];
             try
@@ -37,8 +39,16 @@ namespace TestProject
                     currentLine = System.Text.Encoding.Default.GetString(lineBuffer, 0, bytesRead).Trim();
                     if (isTitle(ref currentLine, ref title))
                     {
-                        indexEntry = title + " , " + (totalOffset - bytesRead).ToString() + Environment.NewLine;
-                        fileWriter.Write(indexEntry);
+                        currentOffset = totalOffset - bytesRead;
+                        long length = currentOffset - prevOffset;                      
+                        indexEntry = title + " , " + currentOffset.ToString() + " , ";
+                        if (prevIndexEntry.Length > 0)
+                        {
+                            prevIndexEntry = prevIndexEntry + length.ToString() + Environment.NewLine;
+                            fileWriter.Write(prevIndexEntry);
+                        }
+                        prevOffset = currentOffset;
+                        prevIndexEntry = indexEntry;
                     }
                 };
             }
@@ -53,27 +63,26 @@ namespace TestProject
 
         public void sortFileLines()
         {
-            //buildIndexLevel_0(Const.WIKI_FILE_PATH);
-            //int fileCount = buildIndexPartition(Const.WORK_DIR_PATH + @"index_level_0UNSORTED.txt");
+            //buildIndexLevel_0(Const.WIKI_FILE_PATH, Const.DB_DIR_PATH + Const.INDEX_LEVEL_0_UNSORTED_FILE_NAME);
+            //buildIndexLevel_0(Const.DB_DIR_PATH + "wiki_test_file.txt", Const.DB_DIR_PATH + Const.INDEX_LEVEL_0_UNSORTED_FILE_NAME);
+            //int fileCount = buildIndexPartition(Const.DB_DIR_PATH + Const.INDEX_LEVEL_0_UNSORTED_FILE_NAME);
             //mergeIndexPartition(fileCount);
-            //mergeIndexPartition(144);
+            //mergeIndexPartition(145);
             //remove all temporary index partitions
-            //buildIndexLevel_N(Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 0 + @".txt", 10, 1);
-            //buildIndexLevel_N(Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 1 + @".txt", 10, 2);
-            //buildIndexLevel_N(Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 2 + @".txt", 10, 3);
-            //buildIndexLevel_N(Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 3 + @".txt", 10, 4);
+            //buildIndexLevel_N(Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 0 + @".txt", 10, 1);
+            buildIndexLevel_N(Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 1 + @".txt", 10, 2);
+            buildIndexLevel_N(Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 2 + @".txt", 10, 3);
+            buildIndexLevel_N(Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + 3 + @".txt", 10, 4);
         }
 
         public void buildIndexLevel_N(String sourceFilePath, int density, int level)
         {
-            String indexFilePath = Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + level + @".txt";
+            String indexFilePath = Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + level + @".txt";
             FileStream inFileStream = new FileStream(sourceFilePath, FileMode.Open, FileAccess.Read);
             FileStream outFileStream = File.Open(indexFilePath, FileMode.Append, FileAccess.Write);
             StreamWriter fileWriter = new StreamWriter(outFileStream);
             long totalOffset = 0;
             String currentLine = "";
-            String[] strArray;
-            String indexEntry = "";
             int bytesRead = 0;
             int counter = 0;
             byte[] lineBuffer = new byte[10000];
@@ -85,16 +94,9 @@ namespace TestProject
                     if (counter % density == 0)
                     {
                         currentLine = System.Text.Encoding.Default.GetString(lineBuffer, 0, bytesRead).Trim();
-                        strArray = currentLine.Split(',');
-                        strArray[strArray.Count() - 1] = "";
-                        currentLine = "";
-                        foreach (String str in strArray)
-                        {
-                            currentLine += str;
-                        }
-                        currentLine = currentLine.Trim();
-                        indexEntry = currentLine + " , " + (totalOffset - bytesRead).ToString() + Environment.NewLine;
-                        fileWriter.Write(indexEntry);
+                        IndexEntry entry = new IndexEntry(currentLine);
+                        entry.offset = totalOffset - bytesRead;
+                        fileWriter.Write(entry.ToString());
                     }
                     counter ++;
                 };
@@ -114,14 +116,14 @@ namespace TestProject
             string currentLine;
             int bytesRead = 0;
             int idx = 0;
-            String outputFile = Const.WORK_DIR_PATH + @"index_level_0.txt";
+            String outputFile = Const.DB_DIR_PATH + @"index_level_0.txt";
 
             FileStream outFileStream = File.Open(outputFile, FileMode.Append, FileAccess.Write);
             StreamWriter fileWriter = new StreamWriter(outFileStream);
-            String[] fullLineArray = new String[N+1];
+            String[] fullLineArray = new String[N];
 
-            FileStream[] inFileStreamArray = new FileStream[N + 1];
-            for (int i = 0; i <= N; i++)
+            FileStream[] inFileStreamArray = new FileStream[N];
+            for (int i = 0; i < N; i++)
             {
                 String fileName = Const.WORK_DIR_PATH + Const.INDEX_PART_FILE_NAME + i + @".txt";
                 inFileStreamArray[i] = new FileStream(fileName, FileMode.Open, FileAccess.Read);
@@ -147,9 +149,7 @@ namespace TestProject
             while (sort.Count > 0)
             {
                 int fileNum = sort.ElementAt(0).Value;
-                //String str = sort.ElementAt(0).Key;
                 String str = fullLineArray[fileNum];
-                //sort.Remove(str);
                 sort.Remove(sort.ElementAt(0).Key);
 
                 fileWriter.Write(str + Environment.NewLine);
@@ -214,21 +214,7 @@ namespace TestProject
             return fileCount;
         }
 
-        private String extractArticleNameFromIndexEntry(String entry)
-        {
-            String result = "";
-            String[] arr = entry.Split(',');
-            for (int i = 0; i < arr.Length - 1; i++)
-            {
-                result += arr[i];
-                if (i < arr.Length - 2)
-                {
-                    result += @",";
-                }
-            }
-            result = result.Trim();
-            return result;
-        }
+
 
         public List<String> quickSort(List<String> arr)
         {
@@ -291,6 +277,22 @@ namespace TestProject
                 return true;
             }
             return false;
+        }
+
+        private String extractArticleNameFromIndexEntry(String entry)
+        {
+            String result = "";
+            String[] arr = entry.Split(',');
+            for (int i = 0; i < arr.Length - 2; i++)
+            {
+                result += arr[i];
+                if (i < arr.Length - 3)
+                {
+                    result += @",";
+                }
+            }
+            result = result.Trim();
+            return result;
         }
 
     }

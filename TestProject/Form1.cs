@@ -25,42 +25,46 @@ namespace TestProject
             //TextManager tm = new TextManager();
             TreeManager treeMan = new TreeManager();
 
-            //dlm.runBuildIndex();
-            //dlm.testIndex();
-            //dlm.getRawArticleText(1124300703);
             //indexer.sortFileLines();
-            //dlm.getArticleByName("Euchrysops horus");
 
-            //tm.getLinksFromArticle("Admiralty Shipyard");
+
+          
 
             //PageRankTester tester = new PageRankTester();
             //tester.test2();
             //tester.test1();
 
-            stopwatch.Start();
-            Node tree = treeMan.buildTree("Tel Aviv", 2);
-            stopwatch.Stop();
-            var t = stopwatch.Elapsed;
+            
+            Node tree = treeMan.buildTree("Berlin", 2);
+            
 
             //tree.toFile(Const.RESULTS_DIR_PATH + @"tree.txt");
 
             LinkMatrix lm = new LinkMatrix(tree);
 
-            lm.calculateRank(600);
+            lm.calculateRank(60);
 
             Vector rank = lm.getPageRank();
 
-            MaxVariancePathFinder pf = new MaxVariancePathFinder();
+            MaxVariancePathFinder mvpf = new MaxVariancePathFinder();
+            ParabolicPathFinder ppf = new ParabolicPathFinder();
             //Path gridyPath = pf.findGridyPath(tree, rank);
-            Path path = pf.findPath(tree, rank);
-            List<Path> paths = pf.findNPaths(tree,rank,5);
+            //Path path = pf.findPath(tree, rank);
+            //List<Path> paths_1 = pf.findNPaths(tree,rank,10);
 
+            stopwatch.Start();
+            List<ParabolicPath> par_paths = ppf.findNPathsParabolic(tree, rank, 10);
+            stopwatch.Stop();
+            var t = stopwatch.Elapsed;
 
+            ppf.pathsListToFile(par_paths, rank, Const.RESULTS_DIR_PATH + @"par_paths_with_rank.txt");
             //gridyPath.pathToFile(rank, Const.RESULTS_DIR_PATH + @"gridy_path_with_rank.txt");
             //path.pathToFile(rank, Const.RESULTS_DIR_PATH + @"path_with_rank.txt");
-            path.pathsListToFile(paths, rank, Const.RESULTS_DIR_PATH + @"paths_with_rank.txt");
-            rank.sortedToFile(Const.RESULTS_DIR_PATH + @"page_rank_result.txt");
+            //(new Path()).pathsListToFile(paths, rank, Const.RESULTS_DIR_PATH + @"paths_with_rank.txt");
+            //rank.sortedToFile(Const.RESULTS_DIR_PATH + @"page_rank_result.txt");
             //util.treeWithPageRankToFile(tree, rank, Const.RESULTS_DIR_PATH + @"tree_with_rank.txt");
+
+
            
         }
     }

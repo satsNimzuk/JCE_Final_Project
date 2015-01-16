@@ -31,85 +31,29 @@ namespace TestProject
             index = readIndex();
         }
 
-        public String getArticleByName(String name)
-        {
-            String result = "";
-            int line = 0;
-
-            line = findIndexLineByName(name);
-
-            long offset = Convert.ToInt64(index[line].Split(',').Last().Trim());
-
-            for (int i = Const.INDEX_DEPTH - 2; i >= 0; i--)
-            {
-                offset = findOffsetByName(name, i, offset);
-            }
-
-            result = getArticleByOffset(offset);
-
-
-            return result;
-        }
 
         //new getArticle method hopefully more eficient one
         public String getArticleByNameNew(String name)
         {
             String result = "";
-            int line = 0;
+            int lineNum = 0;
 
-            line = findIndexLineByName(name);
-
-            long offset = Convert.ToInt64(index[line].Split(',').Last().Trim());
+            lineNum = findIndexLineByName(name);
+            String index_entry = index[lineNum];
+            String[] arr = index_entry.Split(',');
+            long offset = Convert.ToInt64(arr[arr.Length - 2].Trim());
 
             for (int i = Const.INDEX_DEPTH - 2; i > 0; i--)
             {
-                offset = findOffsetByName(name, i, offset);
+                offset = findOffsetByName(name, i, offset).Item1;
             }
-            long indexOffset = offset;
-            offset = findOffsetByName(name, 0, offset);
-            long length = getNextOffset(0, indexOffset) - offset;
+
+            Tuple<long,long> indexEntry = findOffsetByName(name, 0, offset);
+            offset = indexEntry.Item1;
+            long length = indexEntry.Item2;
 
             result = getArticleByOffset(offset, length);
 
-
-            return result;
-        }
-
-        //this method returns returns offset saved in the next line of index file
-        private long getNextOffset(int level, long startOffset)  
-        {
-            long result = startOffset;
-            byte[] lineBuffer = new byte[10000];
-            int bytesRead = 0;
-            String currentLine = "";
-            String[] strArray;
-
-            this.indexFileStreamArr[level].Position = startOffset;
-
-            if ((bytesRead = util.getLine(this.indexFileStreamArr[level], ref lineBuffer)) < 1) //skipping first line
-            {
-                return -1;
-            }
-            if ((bytesRead = util.getLine(this.indexFileStreamArr[level], ref lineBuffer)) > 0)
-            {
-
-                currentLine = System.Text.Encoding.Default.GetString(lineBuffer, 0, bytesRead).Trim();
-                strArray = currentLine.Split(',');
-
-                currentLine = "";
-
-                for (int i = 0; i < strArray.Length - 1; i++)
-                {
-                    currentLine += strArray[i];
-                }
-                currentLine = currentLine.Trim();
-
-                result = Convert.ToInt64(strArray.Last().Trim());
-            }
-            else
-            {
-                return -1;
-            }
 
             return result;
         }
@@ -155,47 +99,46 @@ namespace TestProject
             return -1;
         }
 
-        private long findOffsetByName(String name, int level, long startOffset)
+        private Tuple<long, long> findOffsetByName(String name, int level, long startOffset)
         {
-            long result = startOffset;
+            Tuple<long, long> result = Tuple.Create(startOffset, (long) 0);
             byte[] lineBuffer = new byte[10000];
             int bytesRead = 0;
             String currentLine = "";
-            String[] strArray;
             int sanity_counter = 0;
 
-            //String fileName = Const.WORK_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + level + @".txt";
-            //FileStream inFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-            //inFileStream.Position = startOffset;
             this.indexFileStreamArr[level].Position = startOffset;
 
-            //while ((bytesRead = util.getLine(inFileStream, ref lineBuffer)) > 0)
             while ((bytesRead = util.getLine(this.indexFileStreamArr[level], ref lineBuffer)) > 0)
             {
                 if (sanity_counter > 100)
                 {
-                    return -1;
+                    return Tuple.Create((long)-1, (long)-1);
                 }
 
                 currentLine = System.Text.Encoding.Default.GetString(lineBuffer, 0, bytesRead).Trim();
-                strArray = currentLine.Split(',');
+                //strArray = currentLine.Split(',');
 
-                currentLine = "";
+                //currentLine = "";
 
-                for (int i = 0; i < strArray.Length - 1; i++ )
-                {
-                    currentLine += strArray[i];
-                }
-                currentLine = currentLine.Trim();
+                //for (int i = 0; i < strArray.Length - 2; i++ )
+                //{
+                //    currentLine += strArray[i];
+                //    if (i < strArray.Length - 3)
+                //    {
+                //        currentLine += ",";
+                //    }
+                //}
+                //currentLine = currentLine.Trim();
+                IndexEntry entry = new IndexEntry(currentLine);
 
-                
-
-                if (currentLine.CompareTo(name) > 0)
+                if (entry.articleName.CompareTo(name) > 0)
                 {
                     return result;
                 }
 
-                result = Convert.ToInt64(strArray.Last().Trim());
+                //result = Tuple.Create(Convert.ToInt64(strArray[strArray.Length - 2].Trim()), Convert.ToInt64(strArray[strArray.Length - 1].Trim()));
+                result = Tuple.Create(entry.offset, entry.length);
 
                 sanity_counter++;
             }

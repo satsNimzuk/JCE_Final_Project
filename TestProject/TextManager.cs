@@ -17,7 +17,7 @@ namespace TestProject
 
         public List<String> getLinksFromArticle(String articleName)
         {
-            String article = dlm.getArticleByName(articleName);
+            String article = dlm.getArticleByNameNew(articleName);
             //need to check the right article was retrieved
             String actualArticleName = getArticleName(article);
             if (!actualArticleName.Equals(articleName))
@@ -73,8 +73,11 @@ namespace TestProject
                     {
                         if (text[j].Equals(']') && text[j + 1].Equals(']'))
                         {
-                            String link = text.Substring(i+2,j-i-2);
-                            result.Add(link);
+                            String link = text.Substring(i+2,j-i-2).Trim();
+                            if (link.Length > 0)
+                            {
+                                result.Add(link);
+                            }
                             i = j;
                             break;
                         }
