@@ -8,24 +8,24 @@ using System.IO;
 
 namespace TestProject
 {
-    class DataLayerManager
+    static class DataLayerManager
     {
 
-        Utilities util;
-        List<String> index;
+        private static Utilities util;
+        private static List<String> index;
 
-        FileStream[] indexFileStreamArr = new FileStream[Const.INDEX_DEPTH - 1];
-        FileStream wikiFileStream = new FileStream(Const.WIKI_FILE_PATH, FileMode.Open, FileAccess.Read);
+        private static FileStream[] indexFileStreamArr = new FileStream[Const.INDEX_DEPTH - 1];
+        private static FileStream wikiFileStream = new FileStream(Const.WIKI_FILE_PATH, FileMode.Open, FileAccess.Read);
 
 
-        public DataLayerManager()
+        static DataLayerManager()
         {
             util = new Utilities();
             
             for (int i = 0; i < Const.INDEX_DEPTH - 1; i++)
             {
                 String fileName = Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + i + @".txt";
-                this.indexFileStreamArr[i] = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                indexFileStreamArr[i] = new FileStream(fileName, FileMode.Open, FileAccess.Read);
             }
 
             index = readIndex();
@@ -33,7 +33,7 @@ namespace TestProject
 
 
         //new getArticle method hopefully more eficient one
-        public String getArticleByNameNew(String name)
+        public static String getArticleByNameNew(String name)
         {
             String result = "";
             int lineNum = 0;
@@ -58,7 +58,7 @@ namespace TestProject
             return result;
         }
 
-        private int findIndexLineByName(String name)
+        private static int findIndexLineByName(String name)
         {
             int left = 0;
             int right = index.Count - 1;
@@ -99,7 +99,7 @@ namespace TestProject
             return -1;
         }
 
-        private Tuple<long, long> findOffsetByName(String name, int level, long startOffset)
+        private static Tuple<long, long> findOffsetByName(String name, int level, long startOffset)
         {
             Tuple<long, long> result = Tuple.Create(startOffset, (long) 0);
             byte[] lineBuffer = new byte[10000];
@@ -107,9 +107,9 @@ namespace TestProject
             String currentLine = "";
             int sanity_counter = 0;
 
-            this.indexFileStreamArr[level].Position = startOffset;
+            indexFileStreamArr[level].Position = startOffset;
 
-            while ((bytesRead = util.getLine(this.indexFileStreamArr[level], ref lineBuffer)) > 0)
+            while ((bytesRead = util.getLine(indexFileStreamArr[level], ref lineBuffer)) > 0)
             {
                 if (sanity_counter > 100)
                 {
@@ -117,19 +117,6 @@ namespace TestProject
                 }
 
                 currentLine = System.Text.Encoding.Default.GetString(lineBuffer, 0, bytesRead).Trim();
-                //strArray = currentLine.Split(',');
-
-                //currentLine = "";
-
-                //for (int i = 0; i < strArray.Length - 2; i++ )
-                //{
-                //    currentLine += strArray[i];
-                //    if (i < strArray.Length - 3)
-                //    {
-                //        currentLine += ",";
-                //    }
-                //}
-                //currentLine = currentLine.Trim();
                 IndexEntry entry = new IndexEntry(currentLine);
 
                 if (entry.articleName.CompareTo(name) > 0)
@@ -137,7 +124,6 @@ namespace TestProject
                     return result;
                 }
 
-                //result = Tuple.Create(Convert.ToInt64(strArray[strArray.Length - 2].Trim()), Convert.ToInt64(strArray[strArray.Length - 1].Trim()));
                 result = Tuple.Create(entry.offset, entry.length);
 
                 sanity_counter++;
@@ -146,7 +132,7 @@ namespace TestProject
             return result;
         }
 
-        public String getArticleByOffset(long offset)
+        public static String getArticleByOffset(long offset)
         {
             wikiFileStream.Position = offset;
 
@@ -172,7 +158,7 @@ namespace TestProject
             }
         }
 
-        public String getArticleByOffset(long offset, long length)
+        public static String getArticleByOffset(long offset, long length)
         {
 
             wikiFileStream.Position = offset;
@@ -198,7 +184,7 @@ namespace TestProject
 
 
 
-        private int getText(FileStream fileStream, ref byte[] buffer, long startPosition, int bytesToRead)
+        private static int getText(FileStream fileStream, ref byte[] buffer, long startPosition, int bytesToRead)
         {
             fileStream.Position = startPosition;
             int offset = 0;
@@ -214,13 +200,13 @@ namespace TestProject
         }
 
 
-        private bool isEndOfArticle(String line)
+        private static bool isEndOfArticle(String line)
         {
             line = line.Trim();
             return line.Equals(@"</page>");
         }
 
-        private List<String> readIndex()
+        private static List<String> readIndex()
         {
             String indexFilePath = Const.DB_DIR_PATH + Const.INDEX_LEVEL_N_FILE_NAME + @"4.txt";
             FileStream inFileStream = new FileStream(indexFilePath, FileMode.Open, FileAccess.Read);

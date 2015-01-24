@@ -8,16 +8,15 @@ namespace TestProject
 {
     class TextManager
     {
-        DataLayerManager dlm;
-
+        
         public TextManager()
         {
-            dlm = new DataLayerManager();
+            
         }
 
         public List<String> getLinksFromArticle(String articleName)
         {
-            String article = dlm.getArticleByNameNew(articleName);
+            String article = DataLayerManager.getArticleByNameNew(articleName);
             //need to check the right article was retrieved
             String actualArticleName = getArticleName(article);
             if (!actualArticleName.Equals(articleName))
