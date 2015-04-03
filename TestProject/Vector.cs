@@ -56,6 +56,7 @@ namespace TestProject
 
         public void sortedToFile(String fileName)
         {
+            System.IO.File.WriteAllText(fileName, String.Empty); //clearing file content
 
             FileStream outFileStream = File.Open(fileName, FileMode.Append, FileAccess.Write);
             StreamWriter fileWriter = new StreamWriter(outFileStream);

@@ -10,6 +10,8 @@ namespace TestProject
     class ParabolicPathFinder
     {
 
+        private TextManager textManager = new TextManager();
+
         public List<ParabolicPath> findNPathsParabolic(Node root, Vector rank, int N)
         {
             List<ParabolicPath> result = new List<ParabolicPath>();
@@ -63,6 +65,83 @@ namespace TestProject
                 if (all[j].getPath().Count < 3)
                 {
                     skip = true;
+                }
+                if (!skip)
+                {
+                    result.Add(all[j]);
+                }
+                j++;
+            }
+
+            return result;
+        }
+
+        public List<ParabolicPath> findNPathsParabolicWithBackLink(Node root, Vector rank, int N, bool enforceBackLink)
+        {
+            List<ParabolicPath> result = new List<ParabolicPath>();
+            List<ParabolicPath> all = findAllPathsRec(root, rank);
+
+            List<ParabolicPath> allSortedByMiddleScore = new List<ParabolicPath>();
+            List<ParabolicPath> allSortedByEndScore = new List<ParabolicPath>();
+
+            foreach (ParabolicPath path in all)
+            {
+                path.reversePath();
+                path.calcAndSetRankScore(rank);
+                allSortedByMiddleScore.Add(path);
+                allSortedByEndScore.Add(path);
+            }
+
+            allSortedByMiddleScore = allSortedByMiddleScore.OrderBy(score => score.getScore().getMidRankScore()).ToList();
+            allSortedByEndScore = allSortedByEndScore.OrderByDescending(score => score.getScore().getEndRankScore()).ToList();
+
+            for (int i = 0; i < allSortedByMiddleScore.Count; i++)
+            {
+                allSortedByMiddleScore[i].saveMidIndex(i);
+            }
+            for (int i = 0; i < allSortedByEndScore.Count; i++)
+            {
+                allSortedByEndScore[i].saveEndIndex(i);
+            }
+            foreach (ParabolicPath path in all)
+            {
+                path.calcAndSetFinalParScore();
+            }
+
+            all = all.OrderBy(score => score.getScore().getFinalScore()).ToList();
+
+            int j = 0;
+            bool skip;
+            while (true)
+            {
+                skip = false;
+                if (j >= all.Count || result.Count == N)
+                {
+                    break;
+                }
+                foreach (ParabolicPath p in result)
+                {
+                    if (p.Equals(all[j]))
+                    {
+                        skip = true;
+                    }
+                }
+                if (all[j].getPath().Count < 3)
+                {
+                    skip = true;
+                }
+                if (enforceBackLink && !skip)
+                {
+                    Node last = all[j].getPath().Last();
+                    List<String> links = textManager.getLinksFromArticle(last.name);
+                    skip = true;
+                    foreach (String link in links)
+                    {
+                        if (root.name.Equals(link))
+                        {
+                            skip = false;
+                        }
+                    }                    
                 }
                 if (!skip)
                 {
