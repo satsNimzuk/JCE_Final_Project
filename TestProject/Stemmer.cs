@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace TestProject
+namespace FinalProject
 {
 
     // DOWNLOADED FROM http://tartarus.org/martin/PorterStemmer/csharp.txt

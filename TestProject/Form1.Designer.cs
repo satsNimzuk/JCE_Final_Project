@@ -1,4 +1,4 @@
-﻿namespace TestProject
+﻿namespace FinalProject
 {
     partial class Form1
     {
@@ -38,8 +38,21 @@
             this.loadGraphButton = new System.Windows.Forms.Button();
             this.resultLengthLabel = new System.Windows.Forms.Label();
             this.resultLengthTextBox = new System.Windows.Forms.TextBox();
-            this.findPathButton = new System.Windows.Forms.Button();
             this.loadGraphDialog = new System.Windows.Forms.OpenFileDialog();
+            this.enforceBacklinkCheckBox = new System.Windows.Forms.CheckBox();
+            this.findPathButton = new System.Windows.Forms.Button();
+            this.loadRankButton = new System.Windows.Forms.Button();
+            this.calcPageRankButton = new System.Windows.Forms.Button();
+            this.saveRankButton = new System.Windows.Forms.Button();
+            this.graphInfoLabel = new System.Windows.Forms.Label();
+            this.rankInfoLabel = new System.Windows.Forms.Label();
+            this.reduceArticlesSetButton = new System.Windows.Forms.Button();
+            this.reduceArticlesSetComboBox = new System.Windows.Forms.ComboBox();
+            this.reduceArticlesSetLabel = new System.Windows.Forms.Label();
+            this.articlesSetInfoLabel = new System.Windows.Forms.Label();
+            this.savePathButton = new System.Windows.Forms.Button();
+            this.pathInfoLabel = new System.Windows.Forms.Label();
+            this.calcTfIdfButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label
@@ -51,7 +64,7 @@
             this.label.Location = new System.Drawing.Point(13, 13);
             this.label.Multiline = true;
             this.label.Name = "label";
-            this.label.Size = new System.Drawing.Size(470, 332);
+            this.label.Size = new System.Drawing.Size(453, 794);
             this.label.TabIndex = 0;
             this.label.WordWrap = false;
             // 
@@ -74,7 +87,7 @@
             // graphDepthLabel
             // 
             this.graphDepthLabel.AutoSize = true;
-            this.graphDepthLabel.Location = new System.Drawing.Point(47, 86);
+            this.graphDepthLabel.Location = new System.Drawing.Point(44, 89);
             this.graphDepthLabel.Name = "graphDepthLabel";
             this.graphDepthLabel.Size = new System.Drawing.Size(69, 13);
             this.graphDepthLabel.TabIndex = 3;
@@ -99,7 +112,7 @@
             // 
             // saveGraphButton
             // 
-            this.saveGraphButton.Location = new System.Drawing.Point(138, 143);
+            this.saveGraphButton.Location = new System.Drawing.Point(253, 143);
             this.saveGraphButton.Name = "saveGraphButton";
             this.saveGraphButton.Size = new System.Drawing.Size(75, 23);
             this.saveGraphButton.TabIndex = 6;
@@ -109,7 +122,7 @@
             // 
             // loadGraphButton
             // 
-            this.loadGraphButton.Location = new System.Drawing.Point(231, 143);
+            this.loadGraphButton.Location = new System.Drawing.Point(334, 143);
             this.loadGraphButton.Name = "loadGraphButton";
             this.loadGraphButton.Size = new System.Drawing.Size(75, 23);
             this.loadGraphButton.TabIndex = 7;
@@ -120,7 +133,7 @@
             // resultLengthLabel
             // 
             this.resultLengthLabel.AutoSize = true;
-            this.resultLengthLabel.Location = new System.Drawing.Point(47, 209);
+            this.resultLengthLabel.Location = new System.Drawing.Point(44, 503);
             this.resultLengthLabel.Name = "resultLengthLabel";
             this.resultLengthLabel.Size = new System.Drawing.Size(72, 13);
             this.resultLengthLabel.TabIndex = 8;
@@ -128,31 +141,167 @@
             // 
             // resultLengthTextBox
             // 
-            this.resultLengthTextBox.Location = new System.Drawing.Point(138, 209);
+            this.resultLengthTextBox.Location = new System.Drawing.Point(138, 503);
             this.resultLengthTextBox.Name = "resultLengthTextBox";
             this.resultLengthTextBox.Size = new System.Drawing.Size(271, 20);
             this.resultLengthTextBox.TabIndex = 9;
-            // 
-            // findPathButton
-            // 
-            this.findPathButton.Location = new System.Drawing.Point(50, 266);
-            this.findPathButton.Name = "findPathButton";
-            this.findPathButton.Size = new System.Drawing.Size(75, 23);
-            this.findPathButton.TabIndex = 10;
-            this.findPathButton.Text = "Find path";
-            this.findPathButton.UseVisualStyleBackColor = true;
-            this.findPathButton.Click += new System.EventHandler(this.onFindPathButton);
             // 
             // loadGraphDialog
             // 
             this.loadGraphDialog.FileName = "openFileDialog1";
             // 
+            // enforceBacklinkCheckBox
+            // 
+            this.enforceBacklinkCheckBox.AutoSize = true;
+            this.enforceBacklinkCheckBox.Location = new System.Drawing.Point(150, 565);
+            this.enforceBacklinkCheckBox.Name = "enforceBacklinkCheckBox";
+            this.enforceBacklinkCheckBox.Size = new System.Drawing.Size(106, 17);
+            this.enforceBacklinkCheckBox.TabIndex = 11;
+            this.enforceBacklinkCheckBox.Text = "Enforce backlink";
+            this.enforceBacklinkCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // findPathButton
+            // 
+            this.findPathButton.Location = new System.Drawing.Point(47, 559);
+            this.findPathButton.Name = "findPathButton";
+            this.findPathButton.Size = new System.Drawing.Size(97, 23);
+            this.findPathButton.TabIndex = 14;
+            this.findPathButton.Text = "Calculate path";
+            this.findPathButton.UseVisualStyleBackColor = true;
+            this.findPathButton.Click += new System.EventHandler(this.onFindPathButtonClick);
+            // 
+            // loadRankButton
+            // 
+            this.loadRankButton.Location = new System.Drawing.Point(334, 231);
+            this.loadRankButton.Name = "loadRankButton";
+            this.loadRankButton.Size = new System.Drawing.Size(75, 23);
+            this.loadRankButton.TabIndex = 20;
+            this.loadRankButton.Text = "Load rank";
+            this.loadRankButton.UseVisualStyleBackColor = true;
+            this.loadRankButton.Click += new System.EventHandler(this.onLoadRankButtonClick);
+            // 
+            // calcPageRankButton
+            // 
+            this.calcPageRankButton.Location = new System.Drawing.Point(47, 231);
+            this.calcPageRankButton.Name = "calcPageRankButton";
+            this.calcPageRankButton.Size = new System.Drawing.Size(96, 23);
+            this.calcPageRankButton.TabIndex = 21;
+            this.calcPageRankButton.Text = "Calculate rank";
+            this.calcPageRankButton.UseVisualStyleBackColor = true;
+            this.calcPageRankButton.Click += new System.EventHandler(this.onCalcPageRankButtonClick);
+            // 
+            // saveRankButton
+            // 
+            this.saveRankButton.Location = new System.Drawing.Point(253, 231);
+            this.saveRankButton.Name = "saveRankButton";
+            this.saveRankButton.Size = new System.Drawing.Size(75, 23);
+            this.saveRankButton.TabIndex = 22;
+            this.saveRankButton.Text = "Save rank";
+            this.saveRankButton.UseVisualStyleBackColor = true;
+            this.saveRankButton.Click += new System.EventHandler(this.onSaveRankButtonClick);
+            // 
+            // graphInfoLabel
+            // 
+            this.graphInfoLabel.AutoSize = true;
+            this.graphInfoLabel.Location = new System.Drawing.Point(44, 184);
+            this.graphInfoLabel.Name = "graphInfoLabel";
+            this.graphInfoLabel.Size = new System.Drawing.Size(59, 13);
+            this.graphInfoLabel.TabIndex = 23;
+            this.graphInfoLabel.Text = "Graph info:";
+            // 
+            // rankInfoLabel
+            // 
+            this.rankInfoLabel.AutoSize = true;
+            this.rankInfoLabel.Location = new System.Drawing.Point(44, 273);
+            this.rankInfoLabel.Name = "rankInfoLabel";
+            this.rankInfoLabel.Size = new System.Drawing.Size(56, 13);
+            this.rankInfoLabel.TabIndex = 24;
+            this.rankInfoLabel.Text = "Rank info:";
+            // 
+            // reduceArticlesSetButton
+            // 
+            this.reduceArticlesSetButton.Location = new System.Drawing.Point(47, 360);
+            this.reduceArticlesSetButton.Name = "reduceArticlesSetButton";
+            this.reduceArticlesSetButton.Size = new System.Drawing.Size(124, 23);
+            this.reduceArticlesSetButton.TabIndex = 25;
+            this.reduceArticlesSetButton.Text = "Rebuild articles set";
+            this.reduceArticlesSetButton.UseVisualStyleBackColor = true;
+            this.reduceArticlesSetButton.Click += new System.EventHandler(this.onReduceArticlesSetButtonClick);
+            // 
+            // reduceArticlesSetComboBox
+            // 
+            this.reduceArticlesSetComboBox.FormattingEnabled = true;
+            this.reduceArticlesSetComboBox.Location = new System.Drawing.Point(219, 327);
+            this.reduceArticlesSetComboBox.Name = "reduceArticlesSetComboBox";
+            this.reduceArticlesSetComboBox.Size = new System.Drawing.Size(190, 21);
+            this.reduceArticlesSetComboBox.TabIndex = 26;
+            // 
+            // reduceArticlesSetLabel
+            // 
+            this.reduceArticlesSetLabel.AutoSize = true;
+            this.reduceArticlesSetLabel.Location = new System.Drawing.Point(44, 327);
+            this.reduceArticlesSetLabel.Name = "reduceArticlesSetLabel";
+            this.reduceArticlesSetLabel.Size = new System.Drawing.Size(139, 13);
+            this.reduceArticlesSetLabel.TabIndex = 27;
+            this.reduceArticlesSetLabel.Text = "Rebuild articles set strategy:";
+            // 
+            // articlesSetInfoLabel
+            // 
+            this.articlesSetInfoLabel.AutoSize = true;
+            this.articlesSetInfoLabel.Location = new System.Drawing.Point(44, 404);
+            this.articlesSetInfoLabel.Name = "articlesSetInfoLabel";
+            this.articlesSetInfoLabel.Size = new System.Drawing.Size(81, 13);
+            this.articlesSetInfoLabel.TabIndex = 28;
+            this.articlesSetInfoLabel.Text = "Articles set info:";
+            // 
+            // savePathButton
+            // 
+            this.savePathButton.Location = new System.Drawing.Point(334, 559);
+            this.savePathButton.Name = "savePathButton";
+            this.savePathButton.Size = new System.Drawing.Size(75, 23);
+            this.savePathButton.TabIndex = 29;
+            this.savePathButton.Text = "Save path";
+            this.savePathButton.UseVisualStyleBackColor = true;
+            this.savePathButton.Click += new System.EventHandler(this.onSavePathButtonClick);
+            // 
+            // pathInfoLabel
+            // 
+            this.pathInfoLabel.AutoSize = true;
+            this.pathInfoLabel.Location = new System.Drawing.Point(44, 604);
+            this.pathInfoLabel.Name = "pathInfoLabel";
+            this.pathInfoLabel.Size = new System.Drawing.Size(52, 13);
+            this.pathInfoLabel.TabIndex = 30;
+            this.pathInfoLabel.Text = "Path info:";
+            // 
+            // calcTfIdfButton
+            // 
+            this.calcTfIdfButton.Location = new System.Drawing.Point(47, 648);
+            this.calcTfIdfButton.Name = "calcTfIdfButton";
+            this.calcTfIdfButton.Size = new System.Drawing.Size(106, 23);
+            this.calcTfIdfButton.TabIndex = 31;
+            this.calcTfIdfButton.Text = "Calculate tf-idf";
+            this.calcTfIdfButton.UseVisualStyleBackColor = true;
+            this.calcTfIdfButton.Click += new System.EventHandler(this.onCalcTfIdfButton);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(495, 357);
+            this.ClientSize = new System.Drawing.Size(478, 819);
+            this.Controls.Add(this.calcTfIdfButton);
+            this.Controls.Add(this.pathInfoLabel);
+            this.Controls.Add(this.savePathButton);
+            this.Controls.Add(this.articlesSetInfoLabel);
+            this.Controls.Add(this.reduceArticlesSetLabel);
+            this.Controls.Add(this.reduceArticlesSetComboBox);
+            this.Controls.Add(this.reduceArticlesSetButton);
+            this.Controls.Add(this.rankInfoLabel);
+            this.Controls.Add(this.graphInfoLabel);
+            this.Controls.Add(this.saveRankButton);
+            this.Controls.Add(this.calcPageRankButton);
+            this.Controls.Add(this.loadRankButton);
             this.Controls.Add(this.findPathButton);
+            this.Controls.Add(this.enforceBacklinkCheckBox);
             this.Controls.Add(this.resultLengthTextBox);
             this.Controls.Add(this.resultLengthLabel);
             this.Controls.Add(this.loadGraphButton);
@@ -182,8 +331,21 @@
         private System.Windows.Forms.Button loadGraphButton;
         private System.Windows.Forms.Label resultLengthLabel;
         private System.Windows.Forms.TextBox resultLengthTextBox;
-        private System.Windows.Forms.Button findPathButton;
         private System.Windows.Forms.OpenFileDialog loadGraphDialog;
+        private System.Windows.Forms.CheckBox enforceBacklinkCheckBox;
+        private System.Windows.Forms.Button findPathButton;
+        private System.Windows.Forms.Button loadRankButton;
+        private System.Windows.Forms.Button calcPageRankButton;
+        private System.Windows.Forms.Button saveRankButton;
+        private System.Windows.Forms.Label graphInfoLabel;
+        private System.Windows.Forms.Label rankInfoLabel;
+        private System.Windows.Forms.Button reduceArticlesSetButton;
+        private System.Windows.Forms.ComboBox reduceArticlesSetComboBox;
+        private System.Windows.Forms.Label reduceArticlesSetLabel;
+        private System.Windows.Forms.Label articlesSetInfoLabel;
+        private System.Windows.Forms.Button savePathButton;
+        private System.Windows.Forms.Label pathInfoLabel;
+        private System.Windows.Forms.Button calcTfIdfButton;
 
     }
 }

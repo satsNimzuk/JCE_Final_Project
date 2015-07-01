@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace TestProject
+namespace FinalProject
 {
-    static class Const
+    public static class Const
     {
         public static String WORK_DIR_PATH = @"C:\Users\Stas\Downloads\WikiPedia\";
         public static String DB_DIR_PATH = WORK_DIR_PATH + @"DB\";
@@ -24,6 +24,8 @@ namespace TestProject
         public static Dictionary<String, bool> STOP_WORDS;
         public static Dictionary<String, bool> USER_STOP_WORDS;
         public static char[] DELIMETERS = new char[] { ' ', '\r', '\n', '\t', '|', '(', ')', '{', '}', '[', ']', '\\', '/', '.', ',', '?', '!', '&', '%', '@', '=', ';', ':', '$', '<', '>', '"', '+', '-' };
+
+        public static int PAGE_RANK_NUM_OF_ITERATIONS = 100;
 
         static Const()
         {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace FinalProject
 {
-    class ParabolicScore
+    class PathScore
     {
         private double endRankScore;
         private double middleRankScore;

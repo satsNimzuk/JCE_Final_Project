@@ -4,19 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace FinalProject
 {
     class TfIdfScore
     {
         private double _tfScore;
         private double _idfScore;
-        private double _finalScore;
+        private double _cosineScore;
+
+        public Dictionary<String, double> tfIdfVector;
 
         public TfIdfScore()
         {
             this._tfScore = 0;
             this._idfScore = 0;
-            this._finalScore = 0;
+            this._cosineScore = 0;
+            this.tfIdfVector = new Dictionary<String, double>();
         }
 
 
@@ -30,10 +33,12 @@ namespace TestProject
             get { return _idfScore; }
             set { _idfScore = value; }
         }
-        public double finalScore
+
+        public double cosineScore
         {
-            get { return _finalScore; }
-            set { _finalScore = value; }
+            get { return _cosineScore; }
+            set { _cosineScore = value; }
         }
+
     }
 }

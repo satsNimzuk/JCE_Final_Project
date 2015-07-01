@@ -5,20 +5,59 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace TestProject
+namespace FinalProject
 {
-    class Node
+    public class Node
     {
         public String name;
-        public int index;
         public byte depth;
+        public byte inverse_depth;
         public List<Node> links;
 
         public Node()
         {
             this.name = "";
             this.links = new List<Node>();
-            this.index = 0;
+        }
+
+        public Dictionary<String,Node> findByDepth(byte depth)
+        {
+            Dictionary<String, Node> result = new Dictionary<String, Node>();
+            if (this.links == null || this.links.Count == 0)
+            {
+                return result;
+            }
+
+            byte head_depth = this.depth;
+            findByDepthRec(this, depth, head_depth, result);
+
+            return result;
+        }
+
+        private void findByDepthRec(Node node, byte depth, byte head_depth, Dictionary<String, Node> result)
+        {
+            if (node == null)
+            {
+                return;
+            }
+            if (node.depth < head_depth && node.depth >= head_depth - depth)
+            {
+                if (result.ContainsKey(node.name))
+                {
+                    if (result[node.name].depth < node.depth)
+                    {
+                        result[node.name] = node;
+                    }
+                }
+                else
+                {
+                    result.Add(node.name, node);
+                }
+            }
+            foreach (Node link in node.links)
+            {
+                findByDepthRec(link, depth, head_depth, result);
+            }
         }
 
         public Node(String fileName)
@@ -43,10 +82,30 @@ namespace TestProject
             
             FileStream outFileStream = File.Open(fileName, FileMode.Create, FileAccess.Write);
             StreamWriter fileWriter = new StreamWriter(outFileStream);
-            fileWriter.Write(this.toString());
-            fileWriter.Flush();
+
+            toFileRec(this, 0, fileWriter);
+
             fileWriter.Close();
             outFileStream.Close();
+        }
+
+        private void toFileRec(Node node, int depth, StreamWriter fileWriter)
+        {
+            String prefix = "";
+            String result = "";
+
+            for (int i = 0; i < depth; i++)
+            {
+                prefix += '\t';
+            }
+
+            result = prefix + node.depth + "|" + node.name + Environment.NewLine;
+            fileWriter.Write(result);
+
+            foreach (Node link in node.links)
+            {
+                toFileRec(link, depth + 1, fileWriter);
+            }
         }
 
         public Node loadFromFile(String fileName)

@@ -4,23 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace FinalProject
 {
-    class LinkMatrix
+    class PageRankCalculator
     {
 
         private Dictionary<String, Vector> matrix;
         private Vector danglingVector;
         private Vector rankVector;
-        private String name;
         private Dictionary<String, byte> recursionStarted;
 
-        public LinkMatrix(Node treeRoot)
+        public PageRankCalculator(Node treeRoot)
         {
             matrix = new Dictionary<String, Vector>();
             rankVector = new Vector();
             danglingVector = new Vector();
-            recursionStarted = new Dictionary<String, byte>(); //used by recursionStarted and recursionStarted to prevent infinite recursive loops
+            recursionStarted = new Dictionary<String, byte>();
 
             buildLinkMatrix(treeRoot);
             buildRankVector();
@@ -127,35 +126,53 @@ namespace TestProject
 
         }
 
+        //private void buildRankVector() // 1 to first entry
+        //{
+        //    int count = 0;
+        //    foreach (KeyValuePair<String, Vector> entry in matrix)
+        //    {
+        //        if (count == 0)
+        //        {
+        //            rankVector.setValue(entry.Key, 1);
+        //        }
+        //        else
+        //        {
+        //            rankVector.setValue(entry.Key, 0);
+        //        }
+        //        count++;
+        //    }
+
+        //}
+
         private void buildRankVector()
         {
-            int count = 0;
+            double initValue = (double)1 / (double)matrix.Count;
+
             foreach (KeyValuePair<String, Vector> entry in matrix)
             {
-                if (count == 0)
-                {
-                    rankVector.setValue(entry.Key, 1);
-                }
-                else
-                {
-                    rankVector.setValue(entry.Key, 0);
-                }
-                count ++;
+                rankVector.setValue(entry.Key, initValue);
             }
-
         }
 
         private void singleRankIteration()
         {
             double rankValue = 0;
             double danglingRankValue = 0;
+            double oneRankValue = 0;
             Vector tempVector = new Vector();
+            double alpha = 0.85;
 
             foreach (KeyValuePair<String, double> danglingEntry in danglingVector.vector)
             {
                 danglingRankValue += danglingEntry.Value * rankVector.vector[danglingEntry.Key];
             }
 
+            foreach(KeyValuePair<String, double> oneEntry in this.rankVector.vector)
+            {
+                oneRankValue += (double)oneEntry.Value * ((double)1 / rankVector.vector.Count);
+            }
+
+            
             foreach (KeyValuePair<String, Vector> matrixEntry in matrix)
             {
                 rankValue = 0;
@@ -166,7 +183,7 @@ namespace TestProject
                     rankValue += rowEntry.Value * rankVector.vector[rowEntry.Key];
                 }
 
-                tempVector.vector[matrixEntry.Key] = rankValue + danglingRankValue;
+                tempVector.vector[matrixEntry.Key] = (alpha * rankValue) + (alpha * danglingRankValue) + ((1 - alpha) * oneRankValue);
             }
 
             rankVector = tempVector;

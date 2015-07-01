@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace FinalProject
 {
     class PageRankTester
     {
@@ -21,7 +21,7 @@ namespace TestProject
 
             n1.links = list;
 
-            LinkMatrix lm = new LinkMatrix(n1);
+            PageRankCalculator lm = new PageRankCalculator(n1);
             lm.calculateRank(600);
 
             Vector result = lm.getPageRank();
@@ -96,7 +96,7 @@ namespace TestProject
             n7.links = n7_links;
             n8.links = n8_links;
 
-            LinkMatrix lm = new LinkMatrix(n1);
+            PageRankCalculator lm = new PageRankCalculator(n1);
             lm.calculateRank(60);
 
             Vector result = lm.getPageRank();           

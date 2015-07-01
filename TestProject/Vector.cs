@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace TestProject
+namespace FinalProject
 {
     class Vector
     {
@@ -43,17 +43,6 @@ namespace TestProject
             return vector[id];
         }
 
-        //public void sortedToFile(String fileName)
-        //{
-        //    FileStream outFileStream = File.Open(fileName, FileMode.Create, FileAccess.Write);
-            
-        //    StreamWriter fileWriter = new StreamWriter(outFileStream);
-        //    fileWriter.Write(this.sortedToString());
-        //    fileWriter.Flush();
-        //    fileWriter.Close();
-        //    outFileStream.Close();
-        //}
-
         public void sortedToFile(String fileName)
         {
             System.IO.File.WriteAllText(fileName, String.Empty); //clearing file content
@@ -75,13 +64,55 @@ namespace TestProject
 
             foreach (KeyValuePair<String, double> entry in myList)
             {
-                result = entry.Value + "\t" + entry.Key + Environment.NewLine;
+                result = entry.Value + "\t|\t" + entry.Key + Environment.NewLine;
                 fileWriter.WriteLine(result);
             }
 
             fileWriter.Flush();
             fileWriter.Close();
             outFileStream.Close();
+        }
+
+        public Vector loadFromFile(String fileName)
+        {
+            Dictionary<String, double> result = new Dictionary<string, double>();
+            FileStream inFileStream = File.OpenRead(fileName);
+            StreamReader fileReader = new StreamReader(inFileStream);
+            String line;
+            while ((line = fileReader.ReadLine()) != null)
+            {
+                String[] splits = line.Split('|');
+                if (splits != null && splits.Length == 2)
+                {
+                    String key = splits[1].Trim();
+                    double value = Double.Parse(splits[0].Trim());
+
+                    if (!result.ContainsKey(key))
+                    {
+                        result.Add(key, value);
+                    }
+                }
+            }
+            Vector vector = new Vector();
+            vector.vector = result;
+            return vector;
+        }
+
+        public int calcDecRank(String name)
+        {
+            if (!vector.ContainsKey(name))
+            {
+                return -1;
+            }
+            double min = 0;
+            double max = this.vector.Values.Count;
+
+            List<double> list = this.vector.Values.ToList();
+            list.Sort();
+            double value = list.IndexOf(this.vector[name]);
+
+            int result = (int)(((value - min) / (max - min)) * 10);
+            return result;
         }
 
         public String sortedToString()

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace FinalProject
 {
     class TextManager
     {
@@ -16,6 +16,10 @@ namespace TestProject
 
         public List<String> getLinksFromArticle(String articleName)
         {
+            if (articleName == null || articleName == "")
+            {
+                return new List<String>();
+            }
             String article = DataLayerManager.getArticleByNameNew(articleName);
             //need to check the right article was retrieved
             String actualArticleName = getArticleName(article);
@@ -39,6 +43,12 @@ namespace TestProject
             links.RemoveAll(link => link.Split(':')[0].Equals("Wikipedia"));
             links.RemoveAll(link => link.Split(':')[0].Equals("Image"));
             links.RemoveAll(link => link.Split(':')[0].Equals("Template"));
+
+            // later treat those as redirect pages
+            links.RemoveAll(link => link.StartsWith("List of"));
+            links.RemoveAll(link => link.StartsWith("Outline of"));
+            links.RemoveAll(link => link.StartsWith("Index of"));
+            links.RemoveAll(link => link.StartsWith("Types of"));
             return links;
         }
         private List<String> parseLinks(List<String> links)

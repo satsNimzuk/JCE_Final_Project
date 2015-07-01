@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject
+namespace FinalProject
 {
-    class ParabolicPath
+    class Path
     {
         private List<Node> path;
-        private ParabolicScore score;
+        private PathScore score;
 
-        public ParabolicPath()
+        public Path()
         {
             path = new List<Node>();
-            score = new ParabolicScore();
+            score = new PathScore();
         }
 
         public void addStep(Node step)
@@ -39,7 +39,7 @@ namespace TestProject
             return false;
         }
 
-        public ParabolicScore getScore()
+        public PathScore getScore()
         {
             return this.score;
         }
@@ -49,7 +49,7 @@ namespace TestProject
             return this.path;
         }
 
-        public void setScore(ParabolicScore score)
+        public void setScore(PathScore score)
         {
             this.score = score;
         }
@@ -57,15 +57,30 @@ namespace TestProject
         public void calcAndSetRankScore(Vector rank)
         {
             double midScore = 0;
+            double endScore = 0;
             for (int i = 0; i < path.Count; i++)
             {
                 if (i > 0 && i < path.Count - 1)
                 {
-                    midScore += rank.vector[path[i].name];
-                    midScore = midScore / (path.Count - 2); //normalization
+                    if (rank.vector.ContainsKey(path[i].name))
+                    {
+                        midScore += rank.vector[path[i].name];
+                        midScore = midScore / (path.Count - 2); //normalization
+                    }
+                    else
+                    {
+                        midScore = 10;
+                    }
                 }
             }
-            double endScore = rank.vector[path.Last().name];
+            if (rank.vector.ContainsKey(path.Last().name))
+            {
+                endScore = rank.vector[path.Last().name];
+            }
+            else
+            {
+                endScore = -1;
+            }
 
             this.score.setMidRankScore(midScore);
             this.score.setEndRankScore(endScore);
@@ -87,7 +102,7 @@ namespace TestProject
             path.Reverse();
         }
 
-        public bool Equals(ParabolicPath other)
+        public bool Equals(Path other)
         {
             if (other == null || other.getPath().Count != this.path.Count)
             {
@@ -107,6 +122,23 @@ namespace TestProject
         public void calcAndSetFinalParScore()
         {
             this.score.calcAndSetFinalParScore();
+        }
+
+        public String getName()
+        {
+            String result = "";
+
+            int idx = 1;
+            foreach (Node node in this.path)
+            {
+                result += node.name;
+                if (idx < this.path.Count)
+                {
+                    result += " => ";
+                }
+                idx++;
+            }
+            return result;
         }
     }
 }

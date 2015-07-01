@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace TestProject
+namespace FinalProject
 {
     class Utilities
     {
@@ -74,6 +74,23 @@ namespace TestProject
             }
 
             fileWriter.Write(result);
+            fileWriter.Flush();
+            fileWriter.Close();
+            outFileStream.Close();
+        }
+
+        public void ListToFile(Node graph, Vector pageRank, List<String> backlinks)
+        {
+            String fileName = Const.RESULTS_DIR_PATH + graph.depth + " " + graph.name + " backlinks.txt";
+            FileStream outFileStream = File.Open(fileName, FileMode.Create, FileAccess.Write);
+            StreamWriter fileWriter = new StreamWriter(outFileStream);
+
+            foreach (String link in backlinks)
+            {
+                String line = link + "\t\t\t | \t\t\t" + pageRank.vector[link].ToString() + Environment.NewLine;
+                fileWriter.Write(line);
+            }
+
             fileWriter.Flush();
             fileWriter.Close();
             outFileStream.Close();

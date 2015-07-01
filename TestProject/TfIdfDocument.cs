@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 
 
-namespace TestProject
+namespace FinalProject
 {
-    class Document
+    class TfIdfDocument
     {
         private String _name;
         private Dictionary<String, TfIdfScore> terms;
         public TfIdfScore score;
         
 
-        public Document()
+        public TfIdfDocument()
         {
             this._name = "";
             this.terms = new Dictionary<String, TfIdfScore>();
             this.score = new TfIdfScore();
         }
-        public Document(String articleName)
+        public TfIdfDocument(String articleName)
         {
             this._name = articleName;
             this.terms = new Dictionary<String, TfIdfScore>();
@@ -30,11 +30,34 @@ namespace TestProject
             calcTf(articleName);
         }
 
+        public TfIdfDocument(Path path)
+        {
+            this._name = path.getName();
+            this.terms = new Dictionary<String, TfIdfScore>();
+            this.score = new TfIdfScore();
+
+            calcTf(path);
+        }
+
+        public TfIdfDocument(List<String> tokens)
+        {
+            this.terms = new Dictionary<String, TfIdfScore>();
+            this.score = new TfIdfScore();
+
+            calcTf(tokens);
+        }
+
         public Dictionary<String, TfIdfScore> getTerms()
         {
             return terms;
         }
 
+        private void calcTf(List<String> tokens)
+        {
+            calcRawTf(tokens);
+            normalize(tokens);
+        }
+        
         private void calcTf(String articleName)
         {
             String rawText = DataLayerManager.getArticleByNameNew(articleName);
@@ -43,7 +66,23 @@ namespace TestProject
             List<String> tokens = Tokenizer.prepareTokensForTfIdf(rawText);
             
             calcRawTf(tokens);
-            //normalize(tokens);
+            normalize(tokens);
+        }
+
+        private void calcTf(Path path)
+        {
+            String pathRawText = "";
+
+            for (int i = 1; i < path.getPath().Count; i++)
+            {
+                String articleRawText = DataLayerManager.getArticleByNameNew(path.getPath()[i].name);
+                pathRawText += getContent(articleRawText) + "\n";
+            }
+
+            List<String> tokens = Tokenizer.prepareTokensForTfIdf(pathRawText);
+
+            calcRawTf(tokens);
+            normalize(tokens);
         }
 
         private void calcRawTf(List<String> tokens)
@@ -54,11 +93,11 @@ namespace TestProject
                 {
                     TfIdfScore score = new TfIdfScore();
                     score.tfScore = 1;
-                    terms.Add(token, score);
+                    this.terms.Add(token, score);
                 }
                 else
                 {
-                    terms[token].tfScore++;
+                    this.terms[token].tfScore++;
                 }
 
             }
